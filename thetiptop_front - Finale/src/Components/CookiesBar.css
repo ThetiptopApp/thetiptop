@@ -1,0 +1,121 @@
+.cookie-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 2147483645;
+  box-sizing: border-box;
+  width: 100%;
+  background-color: black; /* Fond noir */
+  color: gold; /* Texte doré */
+  padding: 1rem;
+}
+
+.accept-btn {
+  text-align: center;
+  margin: 1rem 0;
+  margin-right: 2rem;
+  padding: 10px 20px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: black; /* Texte noir */
+  background-color: gold; /* Bouton doré */
+  border-radius: 5px;
+  outline: none;
+  border: 0;
+}
+
+.accept-btn:hover {
+  color: gold; /* Texte doré au survol */
+  background-color: black; /* Fond noir au survol */
+}
+
+.accept-btn.refuse {
+  background-color: black; /* Fond noir pour le bouton de refus */
+}
+
+.accept-btn.refuse:hover {
+  background-color: gold; /* Fond doré pour le bouton de refus au survol */
+}
+
+.content {
+  display: grid;
+  grid-template-columns: repeat(1fr);
+  grid-gap: 20px;
+}
+
+.cookie-consent-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 2147483645;
+  box-sizing: border-box;
+  width: 100%;
+  background-color: black; /* Fond noir semi-transparent */
+  color: gold; /* Texte doré */
+}
+
+.cookie-consent-banner__inner {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 32px 30px;
+}
+
+.cookie-consent-banner__copy {
+  margin-bottom: 16px;
+}
+
+.cookie-consent-banner__header {
+  margin-bottom: 8px;
+  font-weight: 600;
+  font-size: 1.3rem;
+  line-height: 24px;
+}
+
+.cookie-consent-banner__description {
+  font-weight: 500;
+  color: #6e7172; /* Couleur de texte grise */
+  font-size: 1rem;
+  line-height: 24px;
+}
+
+.cookie-consent-banner__cta {
+  box-sizing: border-box;
+  display: inline-block;
+  min-width: 164px;
+  padding: 11px 13px;
+  border-radius: 2px;
+  color: black; /* Texte noir */
+  text-decoration: none;
+  text-align: center;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 20px;
+  background-color: gold; /* Bouton doré */
+}
+
+.cookie-consent-banner__cta--secondary {
+  padding: 9px 13px;
+  border: 2px solid gold; /* Bordure dorée pour le bouton secondaire */
+  background-color: transparent;
+  color: gold; /* Texte doré pour le bouton secondaire */
+}
+
+.cookie-consent-banner__cta--secondary:hover {
+  border-color: gold; /* Bordure dorée au survol pour le bouton secondaire */
+  background-color: gold; /* Fond doré au survol pour le bouton secondaire */
+  color: black; /* Texte noir au survol pour le bouton secondaire */
+}
+
+.cookie-consent-banner__cta:last-child {
+  margin-left: 16px;
+}
+
+@media screen and (max-width: 940px) {
+  .cookie-consent-banner__actions {
+    display: grid;
+  }
+  .accept-btn {
+    width: 100%;
+    margin: 0.4rem 0;
+  }
+}

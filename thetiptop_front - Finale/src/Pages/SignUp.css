@@ -1,0 +1,133 @@
+h2 {
+  font-size: 3rem;
+  color: #fff; /* Blanc */
+  margin-left: 3rem;
+  margin-top: 2rem;
+}
+
+.main .content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 1rem;
+}
+
+.main .content p {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.main .card {
+  border: 1px solid #eee;
+  border-radius: 8px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  padding: 1rem;
+  background-color: #fff; /* Blanc */
+  margin-top: 20px;
+  margin-bottom: 40px;
+  margin-left: 4rem;
+  margin-right: 4rem;
+  min-width: 450px;
+  width: -webkit-fill-available;
+  align-self: center;
+  position: relative;
+}
+
+.card.modify {
+  margin-left: 30rem;
+  margin-right: 30rem;
+}
+
+.main .input2 {
+  height: 30px;
+  margin: 5px auto;
+  width: 250px;
+}
+
+/* Ajout de styles pour les éléments input2 */
+.input2 {
+  height: 50px;
+  margin: 5px auto;
+  border: 2px solid #5bb462; /* Vert */
+  border-radius: 4px;
+  width: 100%;
+  padding: 12px 20px;
+  box-sizing: border-box;
+  font-size: 2rem;
+  font-weight: 400;
+  color: #2b7739; /* Vert */
+}
+
+/* Ajout de styles pour les liens */
+a {
+  text-decoration: none;
+  color: #389949; /* Vert */
+  transition: 0.5s ease;
+}
+
+a:hover {
+  color: #2b7739; /* Vert plus foncé */
+}
+
+/* Ajout de styles pour les boutons */
+.button {
+  border: 0;
+  outline: none;
+  border-radius: 5px;
+  padding: 10px 0;
+  font-size: 1.6rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  background: #389949; /* Vert */
+  color: #ffffff; /* Blanc */
+  transition: all 0.5s ease;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* Ajout de styles pour les boutons de suppression */
+.button.delete-user {
+  margin-top: 1rem;
+  background: #993838; /* Rouge */
+}
+
+.button:hover,
+.button:focus {
+  background: #2b7739; /* Vert plus foncé */
+}
+
+.button.delete-user:hover,
+.button.delete-user:focus {
+  background: #772b2b; /* Rouge plus foncé */
+}
+
+.button-disabled {
+  border: 0;
+  outline: none;
+  border-radius: 5px;
+  padding: 10px 0;
+  font-size: 1.6rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  background: #9be1a8; /* Vert plus clair */
+  color: #ffffff; /* Blanc */
+  transition: all 0.5s ease;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* Ajout de styles pour les messages d'information, d'erreur et d'avertissement */
+.info-msg,
+.error-msg,
+.warn-msg {
+  color: #ffffff; /* Blanc */
+  background-color: #0e2526e6; /* Noir avec transparence */
+  opacity: 0;
+  visibility: hidden;
+  overflow: hidden;
+  height: 0;
+  transition: all 0.4s ease;
+}

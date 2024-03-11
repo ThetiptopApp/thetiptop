@@ -1,0 +1,81 @@
+.lots {
+  width: 100%;
+}
+
+.lots .container {
+  width: 100%;
+  padding: 4rem 10vh;
+}
+
+.line2 {
+  display: block;
+  width: 40px;
+  height: 3px;
+  margin: 5px auto;
+  background-color: gold; /* Couleur dorée */
+  margin-bottom: 4rem;
+}
+
+.lots h2 {
+  font-size: 3rem;
+  text-align: center;
+  margin-left: 0;
+}
+
+.lots .container .content {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 20px;
+}
+
+.content-second {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 20px;
+}
+
+.lots .card {
+  border: 1px solid #eee;
+  border-radius: 8px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  padding: 1rem;
+  margin-bottom: 5rem;
+}
+
+.lots img {
+  border-radius: 20px;
+  margin-top: -2rem;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 260px;
+}
+
+.lots .card p {
+  color: #787878;
+  font-size: 1.8rem;
+  margin: 20px;
+  text-align: center;
+}
+
+.lots .card span {
+  color: gold; /* Couleur dorée */
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+@media screen and (max-width: 1260px) {
+  .lots .container {
+    width: 100%;
+  }
+
+  .lots .container .content,
+  .lots .container .content-second {
+    grid-template-columns: 1fr;
+  }
+
+  .lots .card {
+    max-width: 100%;
+    margin: 1rem;
+  }
+}

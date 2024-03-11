@@ -1,0 +1,56 @@
+h5 {
+  color: var(--primary-color); /* Utilisation de la variable --primary-color */
+  padding-top: 0.5rem;
+  margin-bottom: 2rem;
+  margin-left: 4rem;
+}
+
+.button {
+  padding: 17px 28px;
+  font-size: 1.2rem;
+  color: var(--primary-color); /* Utilisation de la variable --primary-color */
+  font-weight: 600;
+  text-transform: uppercase;
+  background-color: #fff; /* Couleur de fond */
+  border: 1px solid var(--primary-color); /* Utilisation de la variable --primary-color */
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.button:hover {
+  background: var(--secondary-color); /* Utilisation de la variable --secondary-color */
+  border: 1px solid var(--secondary-color); /* Utilisation de la variable --secondary-color */
+  color: #fff; /* Couleur de texte */
+}
+
+.line {
+  display: block;
+  width: 40px;
+  height: 3px;
+  margin: 5px auto;
+  background-color: var(--primary-color); /* Utilisation de la variable --primary-color */
+}
+
+.main {
+  background-color: var(--overlay);
+  color: #000; /* Couleur de texte */
+  width: 100%;
+  min-height: calc(100vh - 8rem);
+  height: fit-content;
+  position: relative;
+  top: 0;
+  bottom: 0;
+  padding-top: var(--nav-bar-height);
+}
+
+.main:before {
+  content: "";
+  background: url("./Components/Img/hero.png") no-repeat center center/cover
+    fixed;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}

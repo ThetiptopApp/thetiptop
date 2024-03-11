@@ -101,7 +101,7 @@ function loadFixtures() {
         {
           email: "admin@thetiptop.com",
           password:
-            "$2y$10$CuilIekJNRU7piXEOfhOv.dt/0qB0xKsSlQaMB4oBFcsE6wgJMAfK", // password
+            "$2y$08$OVglHbCuvJhkrCfIw89Pdue4R6C8fcjUul1cH7E38k5dyH5VZ0fTG", // password
           name: "Hamza NUINO",
           access_level: 1,
           is_sso: false,
@@ -109,7 +109,7 @@ function loadFixtures() {
         {
           email: "staff@thetiptop.com",
           password:
-            "$2y$10$CuilIekJNRU7piXEOfhOv.dt/0qB0xKsSlQaMB4oBFcsE6wgJMAfK", // password
+            "$2y$08$OVglHbCuvJhkrCfIw89Pdue4R6C8fcjUul1cH7E38k5dyH5VZ0fTG", // password
           name: "Hamid ZAHIR",
           access_level: 2,
           is_sso: false,
@@ -117,7 +117,7 @@ function loadFixtures() {
         {
           email: "client@thetiptop.com",
           password:
-            "$2y$10$CuilIekJNRU7piXEOfhOv.dt/0qB0xKsSlQaMB4oBFcsE6wgJMAfK", // password
+            "$2y$08$OVglHbCuvJhkrCfIw89Pdue4R6C8fcjUul1cH7E38k5dyH5VZ0fTG", // password
           name: "John Doe",
           access_level: 3,
           is_sso: false,

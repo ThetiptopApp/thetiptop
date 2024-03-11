@@ -1,0 +1,161 @@
+pipeline {
+    agent { node { label 'main_host' } }
+    stages {
+        stage('Install dependencies') {
+            agent {
+                docker {
+                    image 'node:18-alpine'
+                    args '-v $PWD:/app --workdir /app'
+                }
+            }
+            steps {
+                sh 'npm install'
+                updateGitlabCommitStatus name: 'install deps', state: 'pending'
+                updateGitlabCommitStatus name: 'install deps', state: 'success'
+            }
+        }
+        stage('Tests') {
+            agent {
+                docker {
+                    image 'node:18-alpine'
+                    args '-v $PWD:/app --workdir /app'
+                }
+            }
+            steps {
+                sh 'npm run test'
+                sh 'echo ${DEV_CONTEST_START_TIMESTAMP}'
+                updateGitlabCommitStatus name: 'unit tests', state: 'pending'
+                updateGitlabCommitStatus name: 'unit tests', state: 'success'
+            }
+        }
+        stage('Staging deployment') {
+            when {
+                branch "develop"
+            }
+            steps {
+                script {
+                   def data = "DEV_SRC=${DEV_SRC}\n" +
+                        "DEV_PORT=${DEV_PORT}\n" +
+                        "DEV_MONGO_HOST=${DEV_MONGO_HOST}\n" +
+                        "DEV_MONGO_PORT=${DEV_MONGO_PORT}\n" +
+                        "DEV_MONGO_DB=${DEV_MONGO_DB}\n" +
+                        "DEV_MONGO_USER=${DEV_MONGO_USER}\n" +
+                        "DEV_MONGO_PASSWORD=${DEV_MONGO_PASSWORD}\n" +
+                        "DEV_ADMIN_ACCESS_LEVEL=${DEV_ADMIN_ACCESS_LEVEL}\n" +
+                        "DEV_STAFF_ACCESS_LEVEL=${DEV_STAFF_ACCESS_LEVEL}\n" +
+                        "DEV_CLIENT_ACCESS_LEVEL=${DEV_CLIENT_ACCESS_LEVEL}\n" +
+                        "DEV_JWT_EXPIRATION=${DEV_JWT_EXPIRATION}\n" +
+                        "DEV_JWT_SECRET=${DEV_JWT_SECRET}\n" +
+                        "DEV_JWT_HEADER=${DEV_JWT_HEADER}\n" +
+                        "DEV_CONTEST_START_TIMESTAMP=${DEV_CONTEST_START_TIMESTAMP}\n" +
+                        "DEV_CONTEST_DURATION=${DEV_CONTEST_DURATION}\n" +
+                        "DEV_TOTAL_TICKETS=${DEV_TOTAL_TICKETS}\n" +
+                        "DEV_FRONT_END_URL=${DEV_FRONT_END_URL}\n" +
+                        "ENV=${DEV_ENV}\n" +
+                        "WORKDIR=${WORKDIR}\n" +
+                        "DEV_FRONT_SRC=${DEV_FRONT_SRC}\n" +
+                        "PREPROD_FRONT_SRC=${PREPROD_FRONT_SRC}\n" +
+                        "PROD_FRONT_SRC=${PROD_FRONT_SRC}\n" +
+                        "FRONT_END_REPO=${FRONT_END_REPO}\n" +
+                        "REACT_APP_BACKEND_URL=${REACT_APP_DEV_BACKEND_URL}\n" +
+                        "REACT_APP_GOOGLE_CLIENT_ID=${REACT_APP_GOOGLE_CLIENT_ID}\n" +
+                        "REACT_APP_FACEBOOK_ID=${REACT_APP_FACEBOOK_ID}\n"
+
+                   sh 'echo "' + data + '" | ssh ${DEPLOY_USER}@${DEPLOY_SERVER} -T "cat > ${WORKDIR}/env/.env.${DEV_ENV}"'
+                   sh "ssh ${DEPLOY_USER}@${DEPLOY_SERVER} 'cd ${WORKDIR}/app/back/${DEV_ENV} && git checkout . && git checkout develop && git pull --rebase'"
+                   sh "ssh ${DEPLOY_USER}@${DEPLOY_SERVER} 'docker compose --env-file ${WORKDIR}/env/.env.${DEV_ENV} -f ${WORKDIR}/docker-compose.${DEV_ENV}.yaml up -d mongo_${DEV_ENV}'"
+                   sh "ssh ${DEPLOY_USER}@${DEPLOY_SERVER} 'docker compose --env-file ${WORKDIR}/env/.env.${DEV_ENV} -f ${WORKDIR}/docker-compose.${DEV_ENV}.yaml up --build --force-recreate -d node_${DEV_ENV}'"
+                   sh "ssh ${DEPLOY_USER}@${DEPLOY_SERVER} 'rm ${WORKDIR}/env/.env.${DEV_ENV}'"
+                   sh "ssh ${DEPLOY_USER}@${DEPLOY_SERVER} 'docker exec ttp_back_${DEV_ENV} npm install'"
+                   sh "ssh ${DEPLOY_USER}@${DEPLOY_SERVER} 'docker exec -d ttp_back_${DEV_ENV} npm run start'"
+                }
+            }
+        }
+        stage('Pre production deployment') {
+            when {
+                branch "release"
+            }
+            steps {
+                script {
+                   def data = "PREPROD_SRC=${PREPROD_SRC}\n" +
+                         "PREPROD_PORT=${PREPROD_PORT}\n" +
+                         "PREPROD_MONGO_HOST=${PREPROD_MONGO_HOST}\n" +
+                         "PREPROD_MONGO_PORT=${PREPROD_MONGO_PORT}\n" +
+                         "PREPROD_MONGO_DB=${PREPROD_MONGO_DB}\n" +
+                         "PREPROD_MONGO_USER=${PREPROD_MONGO_USER}\n" +
+                         "PREPROD_MONGO_PASSWORD=${PREPROD_MONGO_PASSWORD}\n" +
+                         "PREPROD_ADMIN_ACCESS_LEVEL=${PREPROD_ADMIN_ACCESS_LEVEL}\n" +
+                         "PREPROD_STAFF_ACCESS_LEVEL=${PREPROD_STAFF_ACCESS_LEVEL}\n" +
+                         "PREPROD_CLIENT_ACCESS_LEVEL=${PREPROD_CLIENT_ACCESS_LEVEL}\n" +
+                         "PREPROD_JWT_EXPIRATION=${PREPROD_JWT_EXPIRATION}\n" +
+                         "PREPROD_JWT_SECRET=${PREPROD_JWT_SECRET}\n" +
+                         "PREPROD_JWT_HEADER=${PREPROD_JWT_HEADER}\n" +
+                         "PREPROD_CONTEST_START_TIMESTAMP=${PREPROD_CONTEST_START_TIMESTAMP}\n" +
+                         "PREPROD_CONTEST_DURATION=${PREPROD_CONTEST_DURATION}\n" +
+                         "PREPROD_TOTAL_TICKETS=${PREPROD_TOTAL_TICKETS}\n" +
+                         "PREPROD_FRONT_END_URL=${PREPROD_FRONT_END_URL}\n" +
+                         "ENV=${PREPROD_ENV}\n" +
+                         "WORKDIR=${WORKDIR}\n" +
+                         "DEV_FRONT_SRC=${DEV_FRONT_SRC}\n" +
+                         "PREPROD_FRONT_SRC=${PREPROD_FRONT_SRC}\n" +
+                         "PROD_FRONT_SRC=${PROD_FRONT_SRC}\n" +
+                         "FRONT_END_REPO=${FRONT_END_REPO}\n" +
+                         "REACT_APP_BACKEND_URL=${REACT_APP_PREPROD_BACKEND_URL}\n" +
+                         "REACT_APP_GOOGLE_CLIENT_ID=${REACT_APP_GOOGLE_CLIENT_ID}\n" +
+                         "REACT_APP_FACEBOOK_ID=${REACT_APP_FACEBOOK_ID}\n"
+
+                   sh 'echo "' + data + '" | ssh ${DEPLOY_USER}@${DEPLOY_SERVER} -T "cat > ${WORKDIR}/env/.env.${PREPROD_ENV}"'
+                   sh "ssh ${DEPLOY_USER}@${DEPLOY_SERVER} 'cd ${WORKDIR}/app/back/${PREPROD_ENV} && git checkout . && git checkout release && git pull --rebase'"
+                   sh "ssh ${DEPLOY_USER}@${DEPLOY_SERVER} 'docker compose --env-file ${WORKDIR}/env/.env.${PREPROD_ENV} -f ${WORKDIR}/docker-compose.${PREPROD_ENV}.yaml up -d mongo_${PREPROD_ENV}'"
+                   sh "ssh ${DEPLOY_USER}@${DEPLOY_SERVER} 'docker compose --env-file ${WORKDIR}/env/.env.${PREPROD_ENV} -f ${WORKDIR}/docker-compose.${PREPROD_ENV}.yaml up --build --force-recreate -d  node_${PREPROD_ENV}'"
+                   sh "ssh ${DEPLOY_USER}@${DEPLOY_SERVER} 'rm ${WORKDIR}/env/.env.${PREPROD_ENV}'"
+                   sh "ssh ${DEPLOY_USER}@${DEPLOY_SERVER} 'docker exec ttp_back_${PREPROD_ENV} npm install'"
+                   sh "ssh ${DEPLOY_USER}@${DEPLOY_SERVER} 'docker exec -d ttp_back_${PREPROD_ENV} npm run start'"
+                }
+            }
+        }
+        stage('Production deploy') {
+            when {
+                branch "master"
+            }
+            steps {
+                script {
+                   def data = "PROD_SRC=${PROD_SRC}\n" +
+                        "PROD_PORT=${PROD_PORT}\n" +
+                        "PROD_MONGO_HOST=${PROD_MONGO_HOST}\n" +
+                        "PROD_MONGO_PORT=${PROD_MONGO_PORT}\n" +
+                        "PROD_MONGO_DB=${PROD_MONGO_DB}\n" +
+                        "PROD_MONGO_USER=${PROD_MONGO_USER}\n" +
+                        "PROD_MONGO_PASSWORD=${PROD_MONGO_PASSWORD}\n" +
+                        "PROD_ADMIN_ACCESS_LEVEL=${PROD_ADMIN_ACCESS_LEVEL}\n" +
+                        "PROD_STAFF_ACCESS_LEVEL=${PROD_STAFF_ACCESS_LEVEL}\n" +
+                        "PROD_CLIENT_ACCESS_LEVEL=${PROD_CLIENT_ACCESS_LEVEL}\n" +
+                        "PROD_JWT_EXPIRATION=${PROD_JWT_EXPIRATION}\n" +
+                        "PROD_JWT_SECRET=${PROD_JWT_SECRET}\n" +
+                        "PROD_JWT_HEADER=${PROD_JWT_HEADER}\n" +
+                        "PROD_CONTEST_START_TIMESTAMP=${PROD_CONTEST_START_TIMESTAMP}\n" +
+                        "PROD_CONTEST_DURATION=${PROD_CONTEST_DURATION}\n" +
+                        "PROD_TOTAL_TICKETS=${PROD_TOTAL_TICKETS}\n" +
+                        "PROD_FRONT_END_URL=${PROD_FRONT_END_URL}\n" +
+                        "ENV=${PROD_ENV}\n" +
+                        "WORKDIR=${WORKDIR}\n" +
+                        "DEV_FRONT_SRC=${DEV_FRONT_SRC}\n" +
+                        "PREPROD_FRONT_SRC=${PREPROD_FRONT_SRC}\n" +
+                        "PROD_FRONT_SRC=${PROD_FRONT_SRC}\n" +
+                        "FRONT_END_REPO=${FRONT_END_REPO}\n" +
+                        "REACT_APP_BACKEND_URL=${REACT_APP_PROD_BACKEND_URL}\n" +
+                        "REACT_APP_GOOGLE_CLIENT_ID=${REACT_APP_GOOGLE_CLIENT_ID}\n" +
+                        "REACT_APP_FACEBOOK_ID=${REACT_APP_FACEBOOK_ID}\n"
+
+                  sh 'echo "' + data + '" | ssh ${DEPLOY_USER}@${DEPLOY_SERVER} -T "cat > ${WORKDIR}/env/.env.${PROD_ENV}"'
+                  sh "ssh ${DEPLOY_USER}@${DEPLOY_SERVER} 'cd ${WORKDIR}/app/back/${PROD_ENV} && git checkout . && git checkout master && git pull --rebase'"
+                  sh "ssh ${DEPLOY_USER}@${DEPLOY_SERVER} 'docker compose --env-file ${WORKDIR}/env/.env.${PROD_ENV} -f ${WORKDIR}/docker-compose.${PROD_ENV}.yaml up -d mongo_${PROD_ENV}'"
+                  sh "ssh ${DEPLOY_USER}@${DEPLOY_SERVER} 'docker compose --env-file ${WORKDIR}/env/.env.${PROD_ENV} -f ${WORKDIR}/docker-compose.${PROD_ENV}.yaml up --build --force-recreate -d node_${PROD_ENV}'"
+                  sh "ssh ${DEPLOY_USER}@${DEPLOY_SERVER} 'rm ${WORKDIR}/env/.env.${PROD_ENV}'"
+                  sh "ssh ${DEPLOY_USER}@${DEPLOY_SERVER} 'docker exec ttp_back_${PROD_ENV} npm install'"
+                  sh "ssh ${DEPLOY_USER}@${DEPLOY_SERVER} 'docker exec -d ttp_back_${PROD_ENV} npm run start'"
+                }
+            }
+        }
+    }
+}
